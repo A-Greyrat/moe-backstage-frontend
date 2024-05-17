@@ -11,7 +11,7 @@ import Style from './AppLayout.module.less';
 
 const SideLayout = React.memo(() => (
   <Layout className={classnames(Style.sidePanel, 'narrow-scrollbar')}>
-    <Menu showLogo showOperation />
+    <Menu showLogo />
     <Layout className={Style.sideContainer}>
       <Header />
       <Content />

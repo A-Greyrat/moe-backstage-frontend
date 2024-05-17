@@ -17,7 +17,7 @@ export default memo((props: IProps) => {
 
   return (
     <div className={Style.menuLogo} onClick={handleClick}>
-      {props.collapsed ? <MiniLogo /> : <FullLogo />}
+      <p className={Style.logoText}>MoE</p>
     </div>
   );
 });

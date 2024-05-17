@@ -6,6 +6,7 @@ import user from './user';
 import listBase from './list/base';
 import listSelect from './list/select';
 import listCard from './list/card';
+import video from './video';
 
 const reducer = combineReducers({
   global,
@@ -13,6 +14,7 @@ const reducer = combineReducers({
   listBase,
   listSelect,
   listCard,
+  video,
 });
 
 export const store = configureStore({

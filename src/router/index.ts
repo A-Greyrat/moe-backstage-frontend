@@ -8,6 +8,10 @@ import result from './modules/result';
 import user from './modules/user';
 import login from './modules/login';
 import otherRoutes from './modules/others';
+import videoManage from './modules/videoManage';
+import upload from './modules/upload';
+import userManage from './modules/userManage';
+import report from "./modules/report";
 
 export interface IRouter {
   path: string;
@@ -50,6 +54,20 @@ const routes: IRouter[] = [
   },
 ];
 
-const allRoutes = [...routes, ...dashboard, ...list, ...form, ...detail, ...result, ...user, ...login, ...otherRoutes];
+const allRoutes = [
+  ...routes,
+  ...user,
+  ...videoManage,
+  ...upload,
+  ...userManage,
+  ...report,
+  // ...dashboard,
+  // ...list,
+  // ...form,
+  // ...detail,
+  // ...result,
+  ...login,
+  // ...otherRoutes,
+];
 
 export default allRoutes;
