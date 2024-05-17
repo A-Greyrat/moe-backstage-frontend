@@ -11,7 +11,7 @@ import otherRoutes from './modules/others';
 import videoManage from './modules/videoManage';
 import upload from './modules/upload';
 import userManage from './modules/userManage';
-import report from "./modules/report";
+import report from './modules/report';
 
 export interface IRouter {
   path: string;
