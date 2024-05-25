@@ -11,20 +11,16 @@ const result = [
     children: [
       {
         path: 'video',
+        Component: lazy(() => import('pages/Report/video')),
         meta: {
           title: '视频举报',
         },
       },
       {
         path: 'comment',
+        Component: lazy(() => import('pages/Report/comment')),
         meta: {
           title: '评论举报',
-        },
-      },
-      {
-        path: 'danmaku',
-        meta: {
-          title: '弹幕举报',
         },
       },
     ],

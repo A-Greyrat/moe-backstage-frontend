@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { BrowserRouterProps } from 'react-router-dom';
-import { Button, MessagePlugin, Row, Table, Tag } from 'tdesign-react';
-import SearchForm from './components/SearchForm';
-import { getFeedbackList, handleFeedback } from 'services/feedback';
+import { Button, MessagePlugin, Table, Tag } from 'tdesign-react';
+import { getReportVideoList, handleReportVideo } from '../../../services/report';
 
-const Feedback: React.FC<BrowserRouterProps> = () => {
+const Report: React.FC<BrowserRouterProps> = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([0, 1]);
   const [loading, setLoading] = useState(false);
   const [userList, setUserList] = useState<any[]>([]);
@@ -16,7 +15,7 @@ const Feedback: React.FC<BrowserRouterProps> = () => {
     (current: number, size: number, value?: any) => {
       setLoading(true);
 
-      getFeedbackList({
+      getReportVideoList({
         pageSize: size,
         page: current,
         ...value,
@@ -35,16 +34,6 @@ const Feedback: React.FC<BrowserRouterProps> = () => {
 
   return (
     <>
-      <Row justify='start' style={{ marginBottom: '20px' }}>
-        <SearchForm
-          onSubmit={async (value) => {
-            handleFetchData(currentPage, pageSize, value);
-          }}
-          onCancel={() => {
-            handleFetchData(currentPage, pageSize);
-          }}
-        />
-      </Row>
       <Table
         loading={loading}
         data={
@@ -60,25 +49,47 @@ const Feedback: React.FC<BrowserRouterProps> = () => {
             ellipsis: true,
           },
           {
-            title: '用户邮箱',
-            colKey: 'email',
+            title: '用户ID',
             ellipsis: true,
-          },
-          {
-            title: '反馈内容',
-            colKey: 'content',
-            ellipsis: true,
-          },
-          {
-            title: '反馈时间',
-            colKey: 'timestamp',
-            ellipsis: true,
+            colKey: 'user',
             cell({ row }) {
-              return new Date(row.timestamp).toLocaleString();
+              return row.user.id;
             },
           },
           {
-            title: '反馈状态',
+            title: '举报对象',
+            colKey: 'video',
+            ellipsis: true,
+            cell({ row }) {
+              return row.video.title;
+            },
+          },
+          {
+            title: '举报原因',
+            colKey: 'reason',
+            ellipsis: true,
+            cell({ row }) {
+              return JSON.parse(row.reason).cause;
+            },
+          },
+          {
+            title: '举报内容',
+            colKey: 'reason',
+            ellipsis: true,
+            cell({ row }) {
+              return JSON.parse(row.reason).description;
+            },
+          },
+          {
+            title: '举报时间',
+            colKey: 'createTime',
+            ellipsis: true,
+            cell({ row }) {
+              return new Date(row.createTime).toLocaleString();
+            },
+          },
+          {
+            title: '举报状态',
             colKey: 'status',
             cell({ row }) {
               return row.status === 1 ? <Tag color='red'>未处理</Tag> : <Tag color='green'>已处理</Tag>;
@@ -97,7 +108,7 @@ const Feedback: React.FC<BrowserRouterProps> = () => {
                     variant='text'
                     onClick={() => {
                       if (userList[record.rowIndex].status === 1) {
-                        handleFeedback(userList[record.rowIndex].id).then((res) => {
+                        handleReportVideo(userList[record.rowIndex].id).then((res) => {
                           if (res.code === 200) {
                             MessagePlugin.success('处理成功');
                             handleFetchData(currentPage, pageSize);
@@ -145,4 +156,4 @@ const Feedback: React.FC<BrowserRouterProps> = () => {
   );
 };
 
-export default React.memo(Feedback);
+export default React.memo(Report);

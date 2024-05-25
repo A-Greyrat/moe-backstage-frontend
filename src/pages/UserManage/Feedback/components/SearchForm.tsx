@@ -1,7 +1,6 @@
 import React, { useRef, memo } from 'react';
 import { Row, Col, Form, Input, Button, MessagePlugin, Select } from 'tdesign-react';
 import { FormInstanceFunctions, SubmitContext } from 'tdesign-react/es/form/type';
-import { VIDEO_STATUS_OPTIONS } from './consts';
 
 const { FormItem } = Form;
 
@@ -38,18 +37,13 @@ const SearchForm: React.FC<SearchFormProps> = (props) => {
       <Form ref={formRef} onSubmit={onSubmit} onReset={onReset} labelWidth={80} colon>
         <Row gutter={[16, 16]}>
           <Col flex={1}>
-            <FormItem label='视频名称' name='title'>
-              <Input placeholder='请输入视频名称' />
+            <FormItem label='邮箱' name='email'>
+              <Input placeholder='请输入反馈者邮箱' />
             </FormItem>
           </Col>
           <Col flex={1}>
-            <FormItem label='视频状态' name='status'>
-              <Select options={VIDEO_STATUS_OPTIONS} placeholder='请选择视频状态' />
-            </FormItem>
-          </Col>
-          <Col flex={1}>
-            <FormItem label='视频编号' name='id'>
-              <Input placeholder='请输入视频编号' />
+            <FormItem label='反馈内容' name='content'>
+              <Input placeholder='请输入反馈内容' />
             </FormItem>
           </Col>
           <Col>

@@ -3,14 +3,14 @@ import { UserIcon } from 'tdesign-icons-react';
 
 const result = [
   {
-    path: '/userManage',
+    path: '/user',
     meta: {
       title: '用户管理',
       Icon: UserIcon,
     },
     children: [
       {
-        path: 'user',
+        path: 'group',
         Component: lazy(() => import('pages/UserManage/User')),
         meta: { title: '用户组管理' },
       },

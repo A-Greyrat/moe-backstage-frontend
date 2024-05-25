@@ -4,7 +4,7 @@ import { IRouter } from '../index';
 
 const result: IRouter[] = [
   {
-    path: '/user',
+    path: '/',
     meta: {
       title: '个人页',
       Icon: UserCircleIcon,

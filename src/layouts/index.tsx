@@ -1,11 +1,13 @@
 import React, { memo, useEffect } from 'react';
-import { Drawer, Layout } from 'tdesign-react';
+import { Drawer, Layout, MessagePlugin } from 'tdesign-react';
 import throttle from 'lodash/throttle';
 import { useAppSelector, useAppDispatch } from 'modules/store';
 import { selectGlobal, toggleSetting, toggleMenu, ELayout, switchTheme } from 'modules/global';
 import Setting from './components/Setting';
 import AppLayout from './components/AppLayout';
 import Style from './index.module.less';
+import { isUserLoggedInSync, logout } from '../services/login';
+import { isAdminUser } from '../services/user';
 
 export default memo(() => {
   const globalState = useAppSelector(selectGlobal);
@@ -27,6 +29,20 @@ export default memo(() => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  if (!isUserLoggedInSync() && window.location.pathname !== '/login') {
+    window.location.pathname = '/login';
+  }
+
+  if (window.location.pathname !== '/login' && isUserLoggedInSync()) {
+    isAdminUser().then((res) => {
+      if (!res) {
+        logout();
+        window.location.pathname = '/login';
+        MessagePlugin.error('您没有权限访问此页面');
+      }
+    });
+  }
 
   return (
     <Layout className={Style.panel}>

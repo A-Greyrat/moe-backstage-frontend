@@ -25,7 +25,7 @@ const SearchForm: React.FC<SearchFormProps> = (props) => {
       MessagePlugin.info('提交成功');
     }
     const queryValue = formRef?.current?.getFieldsValue?.(true);
-    console.log('form 数据', queryValue);
+    props.onSubmit(queryValue as FormValueType);
   };
 
   const onReset = () => {

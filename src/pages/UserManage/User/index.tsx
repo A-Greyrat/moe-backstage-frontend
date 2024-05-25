@@ -1,14 +1,20 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { BrowserRouterProps } from 'react-router-dom';
 import { Button, Dialog, MessagePlugin, Row, Table, Tag } from 'tdesign-react';
-import { USER_STATUS_COLOR, USER_STATUS_OPTIONS } from './components/consts';
+import {
+  USER_PERMISSION_COLOR,
+  USER_PERMISSION_OPTIONS,
+  USER_STATUS_COLOR,
+  USER_STATUS_OPTIONS,
+} from './components/consts';
 import SearchForm from './components/SearchForm';
-import { getUserList } from '../../../services/user';
+import { banUser, getUserList, unbanUser } from 'services/user';
+import defaultAvatar from 'assets/image/defaultAvatar.webp';
 
-const Video: React.FC<BrowserRouterProps> = () => {
+import Style from './index.module.less';
+
+const User: React.FC<BrowserRouterProps> = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([0, 1]);
-  const [visible, setVisible] = useState(false);
-  const [deleteId, setDeleteId] = useState<string | number>('');
   const [loading, setLoading] = useState(false);
   const [userList, setUserList] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,13 +22,15 @@ const Video: React.FC<BrowserRouterProps> = () => {
   const [total, setTotal] = useState(0);
 
   const handleFetchData = useCallback(
-    (current: number, size: number) => {
+    (current: number, size: number, value?: any) => {
       setLoading(true);
+
       getUserList({
         pageSize: size,
-        current,
+        page: current,
+        ...value,
       }).then((res) => {
-        setUserList(res.list);
+        setUserList(res.records);
         setLoading(false);
         setTotal(res.total);
       });
@@ -39,9 +47,11 @@ const Video: React.FC<BrowserRouterProps> = () => {
       <Row justify='start' style={{ marginBottom: '20px' }}>
         <SearchForm
           onSubmit={async (value) => {
-            console.log(value);
+            handleFetchData(currentPage, pageSize, value);
           }}
-          onCancel={() => {}}
+          onCancel={() => {
+            handleFetchData(currentPage, pageSize);
+          }}
         />
       </Row>
       <Table
@@ -54,31 +64,73 @@ const Video: React.FC<BrowserRouterProps> = () => {
         }
         columns={[
           {
+            title: '用户头像',
+            fixed: 'left',
+            align: 'center',
+            width: 100,
+            colKey: 'avatar',
+            cell({ row }) {
+              return (
+                <img
+                  src={row.avatar || defaultAvatar}
+                  alt='avatar'
+                  style={{ width: '32px', height: '32px', borderRadius: '50%' }}
+                />
+              );
+            },
+          },
+          {
             title: '用户名称',
             fixed: 'left',
             align: 'left',
             ellipsis: true,
-            colKey: 'name',
+            colKey: 'nickname',
+          },
+          {
+            title: '用户邮箱',
+            colKey: 'email',
+            ellipsis: true,
+          },
+          {
+            title: '注册时间',
+            colKey: 'createTime',
+            ellipsis: true,
+            cell({ row }) {
+              return new Date(row.createTime).toLocaleString();
+            },
+          },
+          {
+            title: '用户权限',
+            colKey: 'permission',
+            ellipsis: true,
+            cell({ row }) {
+              const permission = row.permission
+                .split(',')
+                .sort((a: string, b: string) => parseInt(b, 10) - parseInt(a, 10));
+              const color = USER_PERMISSION_COLOR[parseInt(permission[0], 10) || 1];
+              return (
+                <Tag color={color} className={Style.tag}>
+                  {USER_PERMISSION_OPTIONS.find((option) => option.value === permission[0])?.label}
+                </Tag>
+              );
+            },
           },
           {
             title: '用户状态',
             colKey: 'status',
-            width: 200,
             cell({ row }) {
               const color = USER_STATUS_COLOR[row.status];
-              return <Tag color={color}>{USER_STATUS_OPTIONS[row.status - 1].label}</Tag>;
+              return <Tag color={color}>{USER_STATUS_OPTIONS[row.status].label}</Tag>;
             },
           },
           {
             title: '用户ID',
-            width: 200,
             ellipsis: true,
             colKey: 'id',
           },
           {
             align: 'center',
             fixed: 'right',
-            width: 300,
             colKey: 'op',
             title: '操作',
             cell(record) {
@@ -88,20 +140,28 @@ const Video: React.FC<BrowserRouterProps> = () => {
                     theme='primary'
                     variant='text'
                     onClick={() => {
-                      setVisible(true);
-                      setDeleteId(userList[record.rowIndex].id);
+                      if (userList[record.rowIndex].status === 0) {
+                        banUser(userList[record.rowIndex].id).then((res) => {
+                          if (res.code === 200) {
+                            MessagePlugin.success('封禁成功');
+                            handleFetchData(currentPage, pageSize);
+                          } else {
+                            MessagePlugin.error('封禁失败');
+                          }
+                        });
+                      } else {
+                        unbanUser(userList[record.rowIndex].id).then((res) => {
+                          if (res.code === 200) {
+                            MessagePlugin.success('解封成功');
+                            handleFetchData(currentPage, pageSize);
+                          } else {
+                            MessagePlugin.error('解封失败');
+                          }
+                        });
+                      }
                     }}
                   >
-                    删除
-                  </Button>
-                  <Button
-                    theme='primary'
-                    variant='text'
-                    onClick={() => {
-                      MessagePlugin.success('操作成功');
-                    }}
-                  >
-                    {userList[record.rowIndex].status === '1' ? '封禁' : '解封'}
+                    {userList[record.rowIndex].status === 0 ? '封禁' : '解封'}
                   </Button>
                 </>
               );
@@ -131,21 +191,8 @@ const Video: React.FC<BrowserRouterProps> = () => {
           },
         }}
       />
-      <Dialog
-        header='确认删除当前所选视频？'
-        visible={visible}
-        onClose={() => {
-          setVisible(false);
-        }}
-        onConfirm={() => {
-          setVisible(false);
-          MessagePlugin.success(`删除成功${deleteId}`);
-        }}
-      >
-        <p>删除后的所有信息将被清空,且无法恢复</p>
-      </Dialog>
     </>
   );
 };
 
-export default React.memo(Video);
+export default React.memo(User);

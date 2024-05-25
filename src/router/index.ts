@@ -42,7 +42,7 @@ export interface IRouter {
 const routes: IRouter[] = [
   {
     path: '/login',
-    Component: lazy(() => import('pages/Login')),
+    Component: lazy(() => import('pages/Login/Login')),
     isFullPage: true,
     meta: {
       hidden: true,
@@ -50,7 +50,7 @@ const routes: IRouter[] = [
   },
   {
     path: '/',
-    redirect: '/dashboard/base',
+    redirect: '/index',
   },
 ];
 

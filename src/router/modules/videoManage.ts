@@ -3,22 +3,22 @@ import { VideoIcon } from 'tdesign-icons-react';
 
 const result = [
   {
-    path: '/videoManage',
+    path: '/video',
     meta: {
       title: '视频管理',
       Icon: VideoIcon,
     },
     children: [
       {
-        path: 'video',
+        path: 'group',
         Component: lazy(() => import('pages/VideoManage/Video')),
         meta: { title: '视频组管理' },
       },
       {
-        path: 'video_detail',
+        path: 'detail/:id',
         Component: lazy(() => import('pages/VideoManage/Video/Detail')),
         meta: {
-          title: '视频详情',
+          title: '视频组详情',
           hidden: true,
         },
       },

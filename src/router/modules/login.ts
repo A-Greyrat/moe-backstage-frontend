@@ -6,8 +6,8 @@ const result: IRouter[] = [
     path: '/login',
     children: [
       {
-        path: 'index',
-        Component: lazy(() => import('pages/Login')),
+        path: '/',
+        Component: lazy(() => import('pages/Login/Login')),
         isFullPage: true,
       },
     ],

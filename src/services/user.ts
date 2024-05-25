@@ -1,59 +1,58 @@
-interface IParams {
-  pageSize: number;
-  current: number;
+import { httpGet, httpPost } from './axios';
+
+interface IUserListParams {
+  id?: string;
+  name?: string;
+  status?: string;
+
+  page?: number;
+  pageSize?: number;
 }
 
 export interface IUser {
-  name: string;
+  nickname: string;
   status: string;
   id: string;
+  avatar: string;
+  signature: string;
+  permission: string;
+  email: string;
+  createTime: string;
 }
 
 interface IResult {
-  list: IUser[];
+  total: number;
+  records: IUser[];
 }
 
-export const getUserList = async (params: IParams) => {
-  // 模拟接口返回数据
-  const list: IUser[] = [
-    {
-      name: '用户1',
-      status: '1',
-      id: '10001',
+export const getUserList = async (params: IUserListParams) =>
+  httpGet<IResult>('/backstage/plain-user/list', { params }).then((res) => {
+    if (res.code === 200) {
+      return (
+        res.data || {
+          total: 0,
+          records: [],
+        }
+      );
+    }
+
+    return {
+      total: 0,
+      records: [],
+    };
+  });
+
+export const banUser = async (id: string) => httpPost(`/backstage/plain-user/ban`, { id, status: 1 });
+
+export const unbanUser = async (id: string) => httpPost(`/backstage/plain-user/ban`, { id, status: 0 });
+
+export const isAdminUser = async () => {
+  const res = await httpGet<IResult>('/backstage/plain-user/list', {
+    params: {
+      page: 1,
+      pageSize: 1,
     },
-    {
-      name: '用户2',
-      status: '2',
-      id: '10002',
-    },
-    {
-      name: '用户3',
-      status: '1',
-      id: '10003',
-    },
-    {
-      name: '用户4',
-      status: '1',
-      id: '10004',
-    },
-    {
-      name: '用户5',
-      status: '2',
-      id: '10005',
-    },
-    {
-      name: '用户6',
-      status: '2',
-      id: '10006',
-    },
-    {
-      name: '用户7',
-      status: '1',
-      id: '10007',
-    },
-  ];
-  return {
-    list,
-    total: 7,
-  };
+  });
+
+  return res.code === 200;
 };
