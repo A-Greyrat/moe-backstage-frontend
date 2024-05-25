@@ -6,6 +6,7 @@ import SearchForm from './components/SearchForm';
 import { deleteVideo, getVideoList, lockVideo, unlockVideo } from '../../../services/video';
 
 const Video: React.FC<BrowserRouterProps> = () => {
+  document.title = '视频组管理';
   const q = window.location.search;
   const page = new URLSearchParams(q).get('page');
   const size = new URLSearchParams(q).get('size');

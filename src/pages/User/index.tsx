@@ -6,6 +6,7 @@ import styles from './index.module.less';
 import { useUser } from '../../services/login';
 
 const User: React.FC<BrowserRouterProps> = () => {
+  document.title = '个人中心';
   const info = useUser();
 
   return (

@@ -4,6 +4,7 @@ import { Button, MessagePlugin, Table, Tag } from 'tdesign-react';
 import { getReportCommentList, handleReportVideo } from '../../../services/report';
 
 const Report: React.FC<BrowserRouterProps> = () => {
+  document.title = '评论举报';
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([0, 1]);
   const [loading, setLoading] = useState(false);
   const [userList, setUserList] = useState<any[]>([]);

@@ -14,6 +14,7 @@ import defaultAvatar from 'assets/image/defaultAvatar.webp';
 import Style from './index.module.less';
 
 const User: React.FC<BrowserRouterProps> = () => {
+  document.title = '用户管理';
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([0, 1]);
   const [loading, setLoading] = useState(false);
   const [userList, setUserList] = useState<any[]>([]);

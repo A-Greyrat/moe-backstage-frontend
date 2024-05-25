@@ -8,6 +8,7 @@ import { deleteVideo } from '../../../services/video';
 import { getBangumiList } from '../../../services/bangumi';
 
 const Bangumi: React.FC<BrowserRouterProps> = () => {
+  document.title = '番剧管理';
   const q = window.location.search;
   const page = new URLSearchParams(q).get('page');
   const size = new URLSearchParams(q).get('size');
@@ -115,7 +116,7 @@ const Bangumi: React.FC<BrowserRouterProps> = () => {
                     theme='primary'
                     variant='text'
                     onClick={() => {
-                      navigate(`/video/bangumi/detail`);
+                      navigate(`/video/bangumi/detail/${record.row.id}`);
                     }}
                   >
                     管理

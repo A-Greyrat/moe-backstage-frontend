@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { BrowserRouterProps, useParams } from 'react-router-dom';
 
-import { useAppSelector } from '../../../../modules/store';
 import { getVideoDetail, IVideo, modifyVideo } from '../../../../services/video';
 import {
   Button,
@@ -16,7 +15,7 @@ import {
 } from 'tdesign-react';
 
 import Style from './index.module.less';
-import ImageUpload from './ImageUpload';
+import ImageUpload from '../../component/ImageUpload';
 
 const VideoDetail: React.FC<BrowserRouterProps> = () => {
   const [videoDetail, setVideoDetail] = useState<IVideo>();
@@ -67,10 +66,9 @@ const VideoDetail: React.FC<BrowserRouterProps> = () => {
     handleFetchData();
   }, []);
 
-  console.log(id);
-  // if (!id) {
-  //   window.location.href = '/video/group';
-  // }
+  if (!id) {
+    window.location.href = '/video/group';
+  }
 
   return (
     <Card>
@@ -100,7 +98,7 @@ const VideoDetail: React.FC<BrowserRouterProps> = () => {
             />
           </InputAdornment>
           <InputAdornment prepend='上传者'>
-            <Input disabled value={videoDetail?.uploader.nickname} clearable />
+            <Input disabled value={videoDetail?.uploader.nickname || '管理员'} clearable />
           </InputAdornment>
           <InputAdornment prepend='权重'>
             <InputNumber
@@ -124,10 +122,10 @@ const VideoDetail: React.FC<BrowserRouterProps> = () => {
             }}
             onClick={() => {
               handleSave({
-                title,
-                description,
-                tags: tags.join(';'),
-                weight,
+                title: title === videoDetail?.title ? undefined : title,
+                description: description === videoDetail?.description ? undefined : description,
+                tags: tags.join(';') === videoDetail?.tags ? undefined : tags.join(';'),
+                weight: weight === videoDetail?.weight ? undefined : weight,
                 cover,
               });
             }}
