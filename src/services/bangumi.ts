@@ -1,4 +1,4 @@
-import {httpGet, httpPost, httpPostForm} from './axios';
+import { httpGet, httpPost, httpPostForm } from './axios';
 
 interface IParams {
   pageSize: number;

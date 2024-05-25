@@ -17,7 +17,7 @@ import {
 
 import Style from './index.module.less';
 import ImageUpload from '../../component/ImageUpload';
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 
 const BangumiDetail: React.FC<BrowserRouterProps> = () => {
   const [bangumiDetail, setBangumiDetail] = useState<IVideo>();
