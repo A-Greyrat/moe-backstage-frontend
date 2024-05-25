@@ -5,6 +5,7 @@ import SearchForm from './components/SearchForm';
 import { getFeedbackList, handleFeedback } from 'services/feedback';
 
 const Feedback: React.FC<BrowserRouterProps> = () => {
+  document.title = '反馈管理';
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([0, 1]);
   const [loading, setLoading] = useState(false);
   const [userList, setUserList] = useState<any[]>([]);

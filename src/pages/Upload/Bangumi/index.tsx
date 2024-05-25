@@ -4,10 +4,14 @@ import { Row } from 'tdesign-react';
 
 import './index.module.less';
 
-const Bangumi: React.FC<BrowserRouterProps> = () => (
-  <Row>
-    <div>Bangumi</div>
-  </Row>
-);
+const Bangumi: React.FC<BrowserRouterProps> = () => {
+  document.title = '番剧上传';
+
+  return (
+    <Row>
+      <div>Bangumi</div>
+    </Row>
+  );
+};
 
 export default React.memo(Bangumi);

@@ -28,6 +28,14 @@ const result = [
         meta: { title: '番剧管理' },
       },
       {
+        path: 'bangumi/detail/:id',
+        Component: lazy(() => import('pages/VideoManage/Bangumi/Detail')),
+        meta: {
+          title: '番剧详情',
+          hidden: true,
+        },
+      },
+      {
         path: 'timeline',
         meta: { title: '新番时间表' },
       },

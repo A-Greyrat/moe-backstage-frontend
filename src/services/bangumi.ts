@@ -1,4 +1,4 @@
-import { httpGet, httpPost } from './axios';
+import { httpGet, httpPost, httpPostForm } from './axios';
 
 interface IParams {
   pageSize: number;
@@ -57,3 +57,36 @@ export const getBangumiList = async (params: IParams) =>
       list: [],
     };
   });
+
+export const deleteBangumi = async (id: number) => httpPost(`/backstage/bangumi-video-group/delete`, { id });
+
+export const lockBangumi = async (id: number) => httpPost(`/backstage/video-group/status`, { id, status: 0 });
+
+export const unlockBangumi = async (id: number) => httpPost(`/backstage/video-group/status`, { id, status: 1 });
+
+export const getBangumiDetail = async (id: number) =>
+  httpGet<IVideo>(`/backstage/bangumi-video-group`, { params: { id } });
+
+export const modifyBangumi = async (params: {
+  id: number;
+  title?: string;
+  description?: string;
+  tags?: string;
+  weight?: number;
+  cover?: File;
+  releaseTime?: string;
+  updateAtAnnouncement?: string;
+  status?: number;
+}) => {
+  const formData = new FormData();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      if (typeof value === 'object' && value instanceof File) {
+        formData.append(key, value);
+        return;
+      }
+      formData.append(key, value.toString());
+    }
+  });
+  return httpPostForm(`/backstage/bangumi-video-group/update`, formData);
+};
