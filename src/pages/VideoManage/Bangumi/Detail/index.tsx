@@ -124,12 +124,12 @@ const BangumiDetail: React.FC<BrowserRouterProps> = () => {
             />
           </InputAdornment>
           <InputAdornment prepend='更新时间'>
-            <DatePicker
+            <Input
+              style={{ width: '30%' }}
+              placeholder='请输入更新时间,格式:每周五晚上10点更新'
               value={updateAtAnnouncement}
-              onPick={(value) => {
-                const d = dayjs(value);
-                setUpdateAtAnnouncement(d.format('YYYY-MM-DDTHH:mm'));
-              }}
+              clearable
+              onChange={setUpdateAtAnnouncement}
             />
           </InputAdornment>
           <InputAdornment prepend='番剧状态'>
