@@ -55,7 +55,7 @@ const Report: React.FC<BrowserRouterProps> = () => {
             ellipsis: true,
             colKey: 'user',
             cell({ row }) {
-              return row.user.id;
+              return row.userDetail.id;
             },
           },
           {
@@ -70,17 +70,6 @@ const Report: React.FC<BrowserRouterProps> = () => {
             title: '举报原因',
             colKey: 'reason',
             ellipsis: true,
-            cell({ row }) {
-              return JSON.parse(row.reason).cause;
-            },
-          },
-          {
-            title: '举报内容',
-            colKey: 'reason',
-            ellipsis: true,
-            cell({ row }) {
-              return JSON.parse(row.reason).description;
-            },
           },
           {
             title: '举报时间',
