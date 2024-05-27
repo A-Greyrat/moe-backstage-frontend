@@ -5,7 +5,7 @@ import { addEpisode } from 'services/video';
 import { Button, Card, Checkbox, DatePicker, Input, InputAdornment, InputNumber, MessagePlugin } from 'tdesign-react';
 
 import VideoUpload from '../component/VideoUpload';
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 
 const Add: React.FC<BrowserRouterProps> = () => {
   const { id } = useParams() || {};
@@ -107,7 +107,7 @@ const Add: React.FC<BrowserRouterProps> = () => {
               return;
             }
 
-            const d= dayjs(bangumiPrePublishTime).format('YYYY-MM-DDTHH:mm:ss')
+            const d = dayjs(bangumiPrePublishTime).format('YYYY-MM-DDTHH:mm:ss');
 
             // eslint-disable-next-line consistent-return
             return addEpisode({
