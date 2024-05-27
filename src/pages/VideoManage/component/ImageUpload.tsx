@@ -471,7 +471,7 @@ const ImageUpload = memo((props: { defaultImageUrl?: string; onChange?: (file: F
     e.currentTarget.style.border = 'none';
   }, []);
 
-  if (defaultImageUrl) {
+  if (imageUrl || defaultImageUrl) {
     return (
       <>
         <input

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { BrowserRouterProps, useParams } from 'react-router-dom';
 
-import { getVideoDetail, IVideo, modifyVideo } from '../../../../services/video';
+import { getVideoDetail, IVideo, modifyVideoGroup } from '../../../../services/video';
 import {
   Button,
   Card,
@@ -9,13 +9,16 @@ import {
   Input,
   InputAdornment,
   InputNumber,
+  Loading,
   MessagePlugin,
+  Select,
   TagInput,
   Textarea,
 } from 'tdesign-react';
 
 import Style from './index.module.less';
 import ImageUpload from '../../component/ImageUpload';
+import { VIDEO_STATUS_OPTIONS } from '../components/consts';
 
 const VideoDetail: React.FC<BrowserRouterProps> = () => {
   const [videoDetail, setVideoDetail] = useState<IVideo>();
@@ -24,6 +27,7 @@ const VideoDetail: React.FC<BrowserRouterProps> = () => {
   const [description, setDescription] = useState<string>('');
   const [weight, setWeight] = useState<number>();
   const [cover, setCover] = useState<File>();
+  const [status, setStatus] = useState<number>();
   const { id } = useParams() || {};
 
   const handleFetchData = () => {
@@ -37,6 +41,7 @@ const VideoDetail: React.FC<BrowserRouterProps> = () => {
         setTitle(res.data!.title);
         setDescription(res.data!.description);
         setWeight(res.data!.weight);
+        setStatus(res.data!.videoGroupStatus);
       } else {
         MessagePlugin.error(res.msg);
       }
@@ -44,10 +49,17 @@ const VideoDetail: React.FC<BrowserRouterProps> = () => {
   };
 
   const handleSave = useCallback(
-    (value: { title?: string; description?: string; tags?: string; weight?: number; cover?: File }) => {
+    (value: {
+      title?: string;
+      description?: string;
+      tags?: string;
+      weight?: number;
+      cover?: File;
+      videoGroupStatus?: number;
+    }) => {
       if (!id) return;
 
-      modifyVideo({
+      modifyVideoGroup({
         id: parseInt(id, 10),
         ...value,
       }).then((res) => {
@@ -68,6 +80,21 @@ const VideoDetail: React.FC<BrowserRouterProps> = () => {
 
   if (!id) {
     window.location.href = '/video/group';
+  }
+
+  if (!videoDetail) {
+    return (
+      <Card
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100%',
+        }}
+      >
+        <Loading />
+      </Card>
+    );
   }
 
   return (
@@ -110,28 +137,49 @@ const VideoDetail: React.FC<BrowserRouterProps> = () => {
               min={0}
             />
           </InputAdornment>
+          <InputAdornment prepend='播放状态'>
+            <Select
+              value={status}
+              options={VIDEO_STATUS_OPTIONS}
+              onChange={(e) => {
+                setStatus(e as number);
+              }}
+            />
+          </InputAdornment>
           <InputAdornment prepend='创建时间'>
             <DatePicker disabled value={videoDetail?.createTime} enableTimePicker />
           </InputAdornment>
-          <Button
-            theme='primary'
-            style={{
-              margin: '20px 0',
-              padding: '0 20px',
-              width: 'fit-content',
-            }}
-            onClick={() => {
-              handleSave({
-                title: title === videoDetail?.title ? undefined : title,
-                description: description === videoDetail?.description ? undefined : description,
-                tags: tags.join(';') === videoDetail?.tags ? undefined : tags.join(';'),
-                weight: weight === videoDetail?.weight ? undefined : weight,
-                cover,
-              });
-            }}
-          >
-            保存
-          </Button>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <Button
+              theme='primary'
+              style={{
+                width: 'fit-content',
+              }}
+              onClick={() => {
+                handleSave({
+                  title: title === videoDetail?.title ? undefined : title,
+                  description: description === videoDetail?.description ? undefined : description,
+                  tags: tags.join(';') === videoDetail?.tags ? undefined : tags.join(';'),
+                  weight: weight === videoDetail?.weight ? undefined : weight,
+                  cover,
+                  videoGroupStatus: status === videoDetail?.videoGroupStatus ? undefined : status,
+                });
+              }}
+            >
+              保存
+            </Button>
+            <Button
+              theme='primary'
+              style={{
+                width: 'fit-content',
+              }}
+              onClick={() => {
+                window.location.href = `/video/episode/${id}`;
+              }}
+            >
+              修改视频分集
+            </Button>
+          </div>
         </div>
       </div>
     </Card>

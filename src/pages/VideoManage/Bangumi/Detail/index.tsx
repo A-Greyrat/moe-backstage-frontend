@@ -13,6 +13,7 @@ import {
   TagInput,
   Textarea,
   Select,
+  Loading,
 } from 'tdesign-react';
 
 import Style from './index.module.less';
@@ -85,6 +86,21 @@ const BangumiDetail: React.FC<BrowserRouterProps> = () => {
 
   if (!id) {
     window.location.href = '/video/bangumi';
+  }
+
+  if (!bangumiDetail) {
+    return (
+      <Card
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100%',
+        }}
+      >
+        <Loading />
+      </Card>
+    );
   }
 
   return (
@@ -164,29 +180,50 @@ const BangumiDetail: React.FC<BrowserRouterProps> = () => {
           <InputAdornment prepend='创建时间'>
             <DatePicker disabled value={bangumiDetail?.createTime} enableTimePicker />
           </InputAdornment>
-          <Button
-            theme='primary'
+          <div
             style={{
-              margin: '20px 0',
-              padding: '0 20px',
-              width: 'fit-content',
-            }}
-            onClick={() => {
-              handleSave({
-                title: title === bangumiDetail?.title ? undefined : title,
-                description: description === bangumiDetail?.description ? undefined : description,
-                tags: tags.join(';') === bangumiDetail?.tags ? undefined : tags.join(';'),
-                weight: weight === bangumiDetail?.weight ? undefined : weight,
-                cover,
-                releaseTime: releaseTime === bangumiDetail?.releaseTime ? undefined : releaseTime,
-                updateAtAnnouncement:
-                  updateAtAnnouncement === bangumiDetail?.updateAtAnnouncement ? undefined : updateAtAnnouncement,
-                status: status === bangumiDetail?.status ? undefined : status,
-              });
+              display: 'flex',
+              gap: '1rem',
             }}
           >
-            保存
-          </Button>
+            <Button
+              theme='primary'
+              style={{
+                margin: '20px 0',
+                padding: '0 20px',
+                width: 'fit-content',
+              }}
+              onClick={() => {
+                handleSave({
+                  title: title === bangumiDetail?.title ? undefined : title,
+                  description: description === bangumiDetail?.description ? undefined : description,
+                  tags: tags.join(';') === bangumiDetail?.tags ? undefined : tags.join(';'),
+                  weight: weight === bangumiDetail?.weight ? undefined : weight,
+                  cover,
+                  releaseTime: releaseTime === bangumiDetail?.releaseTime ? undefined : releaseTime,
+                  updateAtAnnouncement:
+                    updateAtAnnouncement === bangumiDetail?.updateAtAnnouncement ? undefined : updateAtAnnouncement,
+                  status: status === bangumiDetail?.status ? undefined : status,
+                });
+              }}
+            >
+              保存
+            </Button>
+
+            <Button
+              theme='primary'
+              style={{
+                margin: '20px 0',
+                padding: '0 20px',
+                width: 'fit-content',
+              }}
+              onClick={() => {
+                window.location.href = `/video/bangumi/episode/${id}`;
+              }}
+            >
+              修改番剧分集
+            </Button>
+          </div>
         </div>
       </div>
     </Card>

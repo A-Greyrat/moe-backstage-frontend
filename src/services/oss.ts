@@ -25,7 +25,7 @@ export const uploadFileToOss = async (file: File, onProgress: (progress: number)
   }
 
   const path = `tmp/user${user.userId}/`;
-  let fileName = `${Date.now()}-${file.name}`;
+  let fileName = encodeURIComponent(`${Date.now()}-${file.name}`);
 
   const ossTokenRes = await getOssToken(fileName);
   fileName = path + fileName;

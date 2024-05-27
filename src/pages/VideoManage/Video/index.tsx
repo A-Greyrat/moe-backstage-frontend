@@ -3,7 +3,15 @@ import { BrowserRouterProps, useNavigate, useParams } from 'react-router-dom';
 import { Button, Dialog, MessagePlugin, Row, Table, Tag } from 'tdesign-react';
 import { VIDEO_STATUS_COLOR, VIDEO_STATUS_OPTIONS } from './components/consts';
 import SearchForm from './components/SearchForm';
-import { deleteVideo, getVideoList, lockVideo, unlockVideo } from '../../../services/video';
+import {
+  addCarousel,
+  deleteCarousel,
+  deleteVideoGroup,
+  getCarouselList,
+  getVideoList,
+  lockVideoGroup,
+  unlockVideoGroup,
+} from '../../../services/video';
 
 const Video: React.FC<BrowserRouterProps> = () => {
   document.title = '视频组管理';
@@ -19,6 +27,7 @@ const Video: React.FC<BrowserRouterProps> = () => {
   const [currentPage, setCurrentPage] = useState(parseInt(page || '1', 10));
   const [pageSize, setPageSize] = useState(parseInt(size || '10', 10));
   const [total, setTotal] = useState(0);
+  const [carousels, setCarousels] = useState<any[]>([]);
   const navigate = useNavigate();
 
   const handleFetchData = useCallback(
@@ -36,6 +45,12 @@ const Video: React.FC<BrowserRouterProps> = () => {
     },
     [currentPage, pageSize],
   );
+
+  useEffect(() => {
+    getCarouselList().then((res) => {
+      setCarousels(res);
+    });
+  }, []);
 
   useEffect(() => {
     setCurrentPage(parseInt(page || '1', 10));
@@ -143,7 +158,7 @@ const Video: React.FC<BrowserRouterProps> = () => {
                     onClick={() => {
                       console.log(videoList[record.rowIndex]);
                       if (videoList[record.rowIndex].status === 1) {
-                        lockVideo(videoList[record.rowIndex].id).then((res) => {
+                        lockVideoGroup(videoList[record.rowIndex].id).then((res) => {
                           if (res.code === 200) {
                             MessagePlugin.success('锁定成功');
                             handleFetchData(currentPage, pageSize);
@@ -152,7 +167,7 @@ const Video: React.FC<BrowserRouterProps> = () => {
                           }
                         });
                       } else if (videoList[record.rowIndex].status === 0) {
-                        unlockVideo(videoList[record.rowIndex].id).then((res) => {
+                        unlockVideoGroup(videoList[record.rowIndex].id).then((res) => {
                           if (res.code === 200) {
                             MessagePlugin.success('解锁成功');
                             handleFetchData(currentPage, pageSize);
@@ -165,6 +180,41 @@ const Video: React.FC<BrowserRouterProps> = () => {
                     disabled={videoList[record.rowIndex].status === 2}
                   >
                     {videoList[record.rowIndex].status === 0 ? '解锁' : '锁定'}
+                  </Button>
+                  <Button
+                    theme='primary'
+                    variant='text'
+                    onClick={() => {
+                      if (carousels.find((item) => item.id === videoList[record.rowIndex].id)) {
+                        carousels.forEach((item, index) => {
+                          if (item.id === videoList[record.rowIndex].id) {
+                            deleteCarousel(item.id).then((res) => {
+                              if (res.code === 200) {
+                                MessagePlugin.success('取消轮播成功');
+                                setCarousels((c) => {
+                                  const newCarousels = [...c];
+                                  newCarousels.splice(index, 1);
+                                  return newCarousels;
+                                });
+                              } else {
+                                MessagePlugin.error('取消轮播失败');
+                              }
+                            });
+                          }
+                        });
+                      } else {
+                        addCarousel(videoList[record.rowIndex].id, carousels.length).then((res) => {
+                          if (res.code === 200) {
+                            setCarousels((c) => [...c, videoList[record.rowIndex]]);
+                            MessagePlugin.success('设为轮播成功');
+                          } else {
+                            MessagePlugin.error('设为轮播失败');
+                          }
+                        });
+                      }
+                    }}
+                  >
+                    {carousels.find((item) => item.id === videoList[record.rowIndex].id) ? '取消轮播' : '设为轮播'}
                   </Button>
                 </>
               );
@@ -198,7 +248,7 @@ const Video: React.FC<BrowserRouterProps> = () => {
         }}
         onConfirm={() => {
           setVisible(false);
-          deleteVideo(parseInt(deleteId.toString(), 10)).then((res) => {
+          deleteVideoGroup(parseInt(deleteId.toString(), 10)).then((res) => {
             if (res.code === 200) {
               handleFetchData(currentPage, pageSize);
               MessagePlugin.success(`删除成功`);

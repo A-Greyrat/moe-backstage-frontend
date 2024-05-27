@@ -2,6 +2,7 @@ import React, { useRef, memo } from 'react';
 import { Row, Col, Form, Input, Button, MessagePlugin, Select } from 'tdesign-react';
 import { FormInstanceFunctions, SubmitContext } from 'tdesign-react/es/form/type';
 import { VIDEO_STATUS_OPTIONS } from './consts';
+import { useNavigate } from 'react-router-dom';
 
 const { FormItem } = Form;
 
@@ -20,11 +21,19 @@ export type SearchFormProps = {
 
 const SearchForm: React.FC<SearchFormProps> = (props) => {
   const formRef = useRef<FormInstanceFunctions>();
+  const navigate = useNavigate();
   const onSubmit = (e: SubmitContext) => {
     if (e.validateResult === true) {
       MessagePlugin.info('提交成功');
     }
     const queryValue = formRef?.current?.getFieldsValue?.(true);
+    // eslint-disable-next-line no-restricted-syntax
+    for (const key in queryValue) {
+      if (queryValue[key] === undefined || queryValue[key] === '') {
+        delete queryValue[key];
+      }
+    }
+
     props.onSubmit(queryValue as FormValueType);
   };
 
@@ -58,6 +67,18 @@ const SearchForm: React.FC<SearchFormProps> = (props) => {
             </Button>
             <Button type='reset' variant='base' theme='default'>
               重置
+            </Button>
+
+            <Button
+              theme='primary'
+              style={{
+                marginLeft: '20px',
+              }}
+              onClick={() => {
+                navigate('/video/bangumi/add');
+              }}
+            >
+              新增
             </Button>
           </Col>
         </Row>

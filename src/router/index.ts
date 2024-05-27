@@ -1,15 +1,8 @@
 import React, { lazy } from 'react';
 import { BrowserRouterProps } from 'react-router-dom';
-import dashboard from './modules/dashboard';
-import list from './modules/list';
-import form from './modules/form';
-import detail from './modules/detail';
-import result from './modules/result';
 import user from './modules/user';
 import login from './modules/login';
-import otherRoutes from './modules/others';
 import videoManage from './modules/videoManage';
-import upload from './modules/upload';
 import userManage from './modules/userManage';
 import report from './modules/report';
 
@@ -54,20 +47,6 @@ const routes: IRouter[] = [
   },
 ];
 
-const allRoutes = [
-  ...routes,
-  ...user,
-  ...videoManage,
-  ...upload,
-  ...userManage,
-  ...report,
-  // ...dashboard,
-  // ...list,
-  // ...form,
-  // ...detail,
-  // ...result,
-  ...login,
-  // ...otherRoutes,
-];
+const allRoutes = [...routes, ...user, ...videoManage, ...userManage, ...report, ...login];
 
 export default allRoutes;

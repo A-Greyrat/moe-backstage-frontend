@@ -90,3 +90,26 @@ export const modifyBangumi = async (params: {
   });
   return httpPostForm(`/backstage/bangumi-video-group/update`, formData);
 };
+
+export const addBangumi = async (params: {
+  title: string;
+  description: string;
+  tags: string;
+  cover: File;
+  releaseTime: string;
+  updateAtAnnouncement: string;
+  status: number;
+  videoGroupStatus: number;
+}) => {
+  const formData = new FormData();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      if (typeof value === 'object' && value instanceof File) {
+        formData.append(key, value);
+        return;
+      }
+      formData.append(key, value.toString());
+    }
+  });
+  return httpPostForm(`/backstage/bangumi-video-group/add`, formData);
+};
