@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
+import { showModal, withLock } from '@natsume_shiki/mika-ui';
 import { isUserLoggedInSync } from '../login';
-import { MessagePlugin } from 'tdesign-react';
 
 export interface ResponseData<T> {
   code: number;
@@ -13,6 +13,20 @@ const instance = axios.create({
   baseURL,
 });
 
+const RETRY_COUNT = 5;
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const retry = async (fn: () => Promise<any>, count: number) => {
+  const res = await fn();
+
+  if (res.code !== 200 && res.code !== 401) {
+    if (count <= 0) return Promise.resolve(res);
+    return retry(fn, count - 1);
+  }
+  return res;
+};
+
 instance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -24,6 +38,29 @@ instance.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const expireModal = withLock((_lock: boolean) => {
+  showModal({
+    title: '登录过期',
+    content: '登录已过期，请重新登录',
+    onOk: () => {
+      // eslint-disable-next-line no-param-reassign
+      _lock = false;
+      localStorage.removeItem('token');
+      window.location.reload();
+    },
+    onClose: () => {
+      // eslint-disable-next-line no-param-reassign
+      _lock = false;
+      localStorage.removeItem('token');
+      window.location.reload();
+    },
+    closeIcon: false,
+    closeOnClickMask: false,
+    footer: 'ok',
+  });
+});
+
 instance.interceptors.response.use(
   (response) => {
     if (response.headers.token) {
@@ -34,10 +71,7 @@ instance.interceptors.response.use(
   (error) => {
     if (error.response.status === 401) {
       if (isUserLoggedInSync()) {
-        MessagePlugin.error('登录过期，请重新登录').then(() => {
-          localStorage.removeItem('token');
-          window.location.reload();
-        });
+        expireModal();
       }
     }
     return Promise.reject(error);
@@ -45,20 +79,29 @@ instance.interceptors.response.use(
 );
 
 // eslint-disable-next-line no-use-before-define
-export const httpGet = async <T>(url: string, config?: AxiosRequestConfig): Promise<ResponseData<T | null>> =>
-  instance
-    .get(url, config)
-    .then((res) => res.data as ResponseData<T>)
-    .catch((res) => ({
-      code: res.response?.status || 400,
-      data: null,
-      msg: res.response?.data?.msg || '',
-    }));
+export const httpGet = async <T>(
+  url: string,
+  config?: AxiosRequestConfig,
+  autoRetry = true,
+): Promise<ResponseData<T | null>> =>
+  retry(
+    () =>
+      instance
+        .get(url, config)
+        .then((res) => res.data as ResponseData<T>)
+        .catch((res) => ({
+          code: res.response?.status || 400,
+          data: null,
+          msg: res.response?.data?.msg || '',
+        })),
+    autoRetry ? RETRY_COUNT : 0,
+  );
 
 export const httpPost = async <T>(
   url: string,
   data?: unknown,
   config?: AxiosRequestConfig,
+  autoRetry = true,
 ): Promise<ResponseData<T | null>> => {
   // eslint-disable-next-line no-param-reassign
   config = config || {};
@@ -66,20 +109,25 @@ export const httpPost = async <T>(
     'Content-Type': 'application/json',
   };
 
-  return instance
-    .post(url, data, config)
-    .then((res) => res.data as ResponseData<T>)
-    .catch((res) => ({
-      code: res.response?.status,
-      data: null,
-      msg: res.response?.data.msg,
-    }));
+  return retry(
+    () =>
+      instance
+        .post(url, data, config)
+        .then((res) => res.data as ResponseData<T>)
+        .catch((res) => ({
+          code: res.response?.status,
+          data: null,
+          msg: res.response?.data.msg,
+        })),
+    autoRetry ? RETRY_COUNT : 0,
+  );
 };
 
 export const httpPostForm = async <T>(
   url: string,
   data?: unknown,
   config?: AxiosRequestConfig,
+  autoRetry = true,
 ): Promise<ResponseData<T | null>> => {
   // eslint-disable-next-line no-param-reassign
   config = config || {};
@@ -87,14 +135,18 @@ export const httpPostForm = async <T>(
     'Content-Type': 'multipart/form-data',
   };
 
-  return instance
-    .post(url, data, config)
-    .then((res) => res.data as ResponseData<T>)
-    .catch((res) => ({
-      code: res.response?.status,
-      data: null,
-      msg: res.response?.data.msg,
-    }));
+  return retry(
+    () =>
+      instance
+        .post(url, data, config)
+        .then((res) => res.data as ResponseData<T>)
+        .catch((res) => ({
+          code: res.response?.status,
+          data: null,
+          msg: res.response?.data.msg,
+        })),
+    autoRetry ? RETRY_COUNT : 0,
+  );
 };
 
 export const errorResponse: ResponseData<null> = {

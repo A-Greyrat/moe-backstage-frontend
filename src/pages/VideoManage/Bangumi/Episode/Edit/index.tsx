@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { BrowserRouterProps, useParams } from 'react-router-dom';
 
-import { getEpisodeDetail, IEpisodeDetail, modifyEpisode } from 'services/video';
+import { getEpisodeDetail, IEpisodeDetail, modifyBangumiEpisode, modifyEpisode } from 'services/video';
 import {
   Button,
   Card,
@@ -16,6 +16,7 @@ import {
 
 import Style from './index.module.less';
 import VideoUpload from '../component/VideoUpload';
+import dayjs from 'dayjs';
 
 const Edit: React.FC<BrowserRouterProps> = () => {
   const [videoDetail, setVideoDetail] = useState<IEpisodeDetail>();
@@ -26,7 +27,7 @@ const Edit: React.FC<BrowserRouterProps> = () => {
   const [uploadTime, setUploadTime] = useState<string>('');
   const [link, setLink] = useState<string | undefined>(undefined);
   const [isBangumiPrePublish, setIsBangumiPrePublish] = useState<boolean>(false);
-  const [bangumiPrePublishTime, setBangumiPrePublishTime] = useState<string>();
+  const [bangumiPrePublishTime, setBangumiPrePublishTime] = useState<string | null>(null);
   const [src, setSrc] = useState<
     {
       srcName: string;
@@ -68,28 +69,36 @@ const Edit: React.FC<BrowserRouterProps> = () => {
         setDescription(res.data!.description);
         setUploadTime(res.data!.uploadTime);
         setSrc(res.data!.src);
+        setIsBangumiPrePublish(res.data!.willUpdateTime !== null);
+        setBangumiPrePublishTime(res.data!.willUpdateTime);
       } else {
         MessagePlugin.error(res.msg);
       }
     });
   };
 
-  const handleSave = useCallback((value: { title?: string; link?: string }) => {
-    if (!id) return;
+  const handleSave = useCallback(
+    (value: { title?: string; link?: string; isBangumiPrePublish: boolean; bangumiPrePublishTime: string | null }) => {
+      if (!id) return;
+      const d = dayjs(bangumiPrePublishTime).format('YYYY-MM-DDTHH:mm:ss');
 
-    modifyEpisode({
-      id: parseInt(id, 10),
-      ...value,
-      videoStatusWillBe: value.link ? 1 : undefined,
-    }).then((res) => {
-      if (res.code === 200) {
-        MessagePlugin.success('修改成功');
-        handleFetchData();
-      } else {
-        MessagePlugin.error(res.msg);
-      }
-    });
-  }, []);
+      modifyBangumiEpisode({
+        id: parseInt(id, 10),
+        title: value.title,
+        link: value.link,
+        videoStatusWillBe: isBangumiPrePublish ? 3 : 1,
+        videoPublishTime: isBangumiPrePublish ? d : undefined,
+      }).then((res) => {
+        if (res.code === 200) {
+          MessagePlugin.success('修改成功');
+          handleFetchData();
+        } else {
+          MessagePlugin.error(res.msg);
+        }
+      });
+    },
+    [],
+  );
 
   useEffect(() => {
     handleFetchData();
@@ -136,7 +145,7 @@ const Edit: React.FC<BrowserRouterProps> = () => {
           {isBangumiPrePublish && (
             <InputAdornment prepend='预发布时间'>
               <DatePicker
-                value={bangumiPrePublishTime}
+                value={bangumiPrePublishTime || undefined}
                 onChange={(value) => {
                   setBangumiPrePublishTime(value as string);
                 }}
@@ -190,6 +199,8 @@ const Edit: React.FC<BrowserRouterProps> = () => {
                 handleSave({
                   title: title === videoDetail.title ? undefined : title,
                   link,
+                  isBangumiPrePublish,
+                  bangumiPrePublishTime,
                 });
               }}
             >

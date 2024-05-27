@@ -11,7 +11,7 @@ import {
   getVideoList,
   lockVideoGroup,
   unlockVideoGroup,
-} from '../../../services/video';
+} from 'services/video';
 
 const Video: React.FC<BrowserRouterProps> = () => {
   document.title = '视频组管理';

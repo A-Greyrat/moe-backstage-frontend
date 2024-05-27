@@ -5,11 +5,12 @@ import { addEpisode } from 'services/video';
 import { Button, Card, Checkbox, DatePicker, Input, InputAdornment, InputNumber, MessagePlugin } from 'tdesign-react';
 
 import VideoUpload from '../component/VideoUpload';
+import dayjs from "dayjs";
 
 const Add: React.FC<BrowserRouterProps> = () => {
   const { id } = useParams() || {};
   const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('Null');
+  const [description, setDescription] = useState<string>('null');
   const [link, setLink] = useState<string | undefined>(undefined);
   const [index, setIndex] = useState<number | undefined>(undefined);
   const [isBangumiPrePublish, setIsBangumiPrePublish] = useState<boolean>(false);
@@ -101,19 +102,22 @@ const Add: React.FC<BrowserRouterProps> = () => {
               return;
             }
 
-            if (link === undefined) {
-              MessagePlugin.error('请上传视频');
+            if (isBangumiPrePublish && !bangumiPrePublishTime) {
+              MessagePlugin.error('请选择预发布时间');
               return;
             }
+
+            const d= dayjs(bangumiPrePublishTime).format('YYYY-MM-DDTHH:mm:ss')
 
             // eslint-disable-next-line consistent-return
             return addEpisode({
               title,
               description,
               link,
-              videoStatusWillBe: 1,
+              videoStatusWillBe: isBangumiPrePublish ? 3 : 1,
               index,
               videoGroupId: id,
+              videoPublishTime: isBangumiPrePublish ? d : undefined,
             }).then((res) => {
               if (res.code === 200) {
                 MessagePlugin.success('添加成功');

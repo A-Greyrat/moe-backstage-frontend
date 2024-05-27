@@ -146,6 +146,7 @@ export interface IEpisodeDetail {
   cover: string;
   uploadTime: string;
   description: string;
+  willUpdateTime: string | null;
   src: {
     srcName: string;
     src: string;
@@ -154,8 +155,20 @@ export interface IEpisodeDetail {
 
 export const getEpisodeDetail = async (id: number) => httpGet<IEpisodeDetail>(`/backstage/video`, { params: { id } });
 
-export const modifyEpisode = async (params: { id: number; title?: string; videoStatusWillBe?: number }) =>
-  httpPost(`/backstage/video/update`, params);
+export const modifyEpisode = async (params: {
+  id: number;
+  title?: string;
+  link?: string;
+  videoStatusWillBe?: number;
+}) => httpPost(`/backstage/video/update`, params);
+
+export const modifyBangumiEpisode = async (params: {
+  id: number;
+  title?: string;
+  link?: string;
+  videoStatusWillBe?: number;
+  videoPublishTime?: string;
+}) => httpPost(`/backstage/video/update`, params);
 
 export const addEpisode = async (params: {
   title: string;
@@ -164,6 +177,7 @@ export const addEpisode = async (params: {
   description?: string;
   link?: string;
   videoStatusWillBe?: number;
+  videoPublishTime?: string;
 }) => httpPost(`/backstage/video/add`, params);
 
 export const getCarouselList = async () =>
@@ -179,3 +193,6 @@ export const addCarousel = async (id: number, index: number) =>
   httpPost('/backstage/video-group/carousel/add', { ids: [id], index });
 
 export const deleteCarousel = async (id: number) => httpPost('/backstage/video-group/carousel/delete', { ids: [id] });
+
+export const changeEpisodeIndex = async (newIndex: { videoId: string; index: number }[]) =>
+  httpPost('/backstage/video/update-many-index', { arr: newIndex });

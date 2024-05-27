@@ -2,7 +2,7 @@ import React, { lazy } from 'react';
 import { BrowserRouterProps } from 'react-router-dom';
 import user from './modules/user';
 import login from './modules/login';
-import videoManage from './modules/videoManage';
+import videoManage from './modules/video';
 import userManage from './modules/userManage';
 import report from './modules/report';
 

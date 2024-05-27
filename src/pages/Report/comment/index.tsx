@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { BrowserRouterProps } from 'react-router-dom';
 import { Button, MessagePlugin, Table, Tag } from 'tdesign-react';
 import { getReportCommentList, handleReportVideo } from '../../../services/report';
+import { deleteComment } from '../../../services/comment';
 
 const Report: React.FC<BrowserRouterProps> = () => {
   document.title = '评论举报';
@@ -109,12 +110,19 @@ const Report: React.FC<BrowserRouterProps> = () => {
                     variant='text'
                     onClick={() => {
                       if (userList[record.rowIndex].status === 1) {
-                        handleReportVideo(userList[record.rowIndex].id).then((res) => {
+                        deleteComment(userList[record.rowIndex].comment.id).then((res) => {
                           if (res.code === 200) {
-                            MessagePlugin.success('处理成功');
+                            handleReportVideo(userList[record.rowIndex].id).then((res) => {
+                              if (res.code === 200) {
+                                MessagePlugin.success('处理成功');
+                                handleFetchData(currentPage, pageSize);
+                              } else {
+                                MessagePlugin.error('处理失败');
+                              }
+                            });
                             handleFetchData(currentPage, pageSize);
                           } else {
-                            MessagePlugin.error('处理失败');
+                            MessagePlugin.error('删除失败');
                           }
                         });
                       } else {
@@ -123,8 +131,27 @@ const Report: React.FC<BrowserRouterProps> = () => {
                     }}
                     disabled={userList[record.rowIndex].status === 0}
                   >
-                    {userList[record.rowIndex].status === 1 ? '处理' : '已处理'}
+                    {userList[record.rowIndex].status === 1 ? '删除' : '已处理'}
                   </Button>
+                  {userList[record.rowIndex].status === 1 && (
+                    <Button
+                      theme='primary'
+                      variant='text'
+                      onClick={() => {
+                        handleReportVideo(userList[record.rowIndex].id).then((res) => {
+                          if (res.code === 200) {
+                            MessagePlugin.success('处理成功');
+                            handleFetchData(currentPage, pageSize);
+                          } else {
+                            MessagePlugin.error('处理失败');
+                          }
+                        });
+                      }}
+                      disabled={userList[record.rowIndex].status === 0}
+                    >
+                      忽略
+                    </Button>
+                  )}
                 </>
               );
             },

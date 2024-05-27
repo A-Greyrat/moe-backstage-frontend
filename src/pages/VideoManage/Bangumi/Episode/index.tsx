@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouterProps, useNavigate, useParams } from 'react-router-dom';
 
 import { Button, Card, Dialog, MessagePlugin, Table } from 'tdesign-react';
-import { deleteEpisode, getPlainVideoGroupEpisodeList, IEpisodeListItem } from '../../../../services/video';
+import { changeEpisodeIndex, deleteEpisode, getPlainVideoGroupEpisodeList, IEpisodeListItem } from 'services/video';
 import { MoveIcon } from 'tdesign-icons-react';
 
 const Episode: React.FC<BrowserRouterProps> = () => {
@@ -46,7 +46,18 @@ const Episode: React.FC<BrowserRouterProps> = () => {
         data={episodeList}
         dragSort='row-handler'
         onDragSort={(data) => {
-          console.log(data);
+          changeEpisodeIndex(
+            data.newData.map((item, index) => ({
+              videoId: item.videoId,
+              index: index + 1,
+            })),
+          ).then((res) => {
+            if (res.code === 200) {
+              handleFetchData();
+            } else {
+              MessagePlugin.error('修改失败');
+            }
+          });
         }}
         columns={[
           {

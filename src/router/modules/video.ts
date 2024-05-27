@@ -99,6 +99,20 @@ const result = [
           hidden: true,
         },
       },
+      {
+        path: 'bilibili',
+        Component: lazy(() => import('pages/VideoManage/Video/Bilibili')),
+        meta: {
+          title: 'B站视频管理',
+        },
+      },
+      {
+        path: 'bangumi/bilibili',
+        Component: lazy(() => import('pages/VideoManage/Bangumi/Bilibili')),
+        meta: {
+          title: 'B站番剧管理',
+        },
+      },
     ],
   },
 ];

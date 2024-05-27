@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { BrowserRouterProps } from 'react-router-dom';
 import { Button, MessagePlugin, Table, Tag } from 'tdesign-react';
 import { getReportVideoList, handleReportVideo } from '../../../services/report';
+import { lockVideoGroup } from '../../../services/video';
 
 const Report: React.FC<BrowserRouterProps> = () => {
   document.title = '视频举报';
@@ -109,12 +110,18 @@ const Report: React.FC<BrowserRouterProps> = () => {
                     variant='text'
                     onClick={() => {
                       if (userList[record.rowIndex].status === 1) {
-                        handleReportVideo(userList[record.rowIndex].id).then((res) => {
+                        lockVideoGroup(userList[record.rowIndex].video.videoGroupId).then((res) => {
                           if (res.code === 200) {
-                            MessagePlugin.success('处理成功');
-                            handleFetchData(currentPage, pageSize);
+                            handleReportVideo(userList[record.rowIndex].id).then((res) => {
+                              if (res.code === 200) {
+                                MessagePlugin.success('处理成功');
+                                handleFetchData(currentPage, pageSize);
+                              } else {
+                                MessagePlugin.error('处理失败');
+                              }
+                            });
                           } else {
-                            MessagePlugin.error('处理失败');
+                            MessagePlugin.error('冻结失败');
                           }
                         });
                       } else {
@@ -123,8 +130,31 @@ const Report: React.FC<BrowserRouterProps> = () => {
                     }}
                     disabled={userList[record.rowIndex].status === 0}
                   >
-                    {userList[record.rowIndex].status === 1 ? '处理' : '已处理'}
+                    {userList[record.rowIndex].status === 1 ? '冻结' : '已处理'}
                   </Button>
+                  {userList[record.rowIndex].status === 1 && (
+                    <Button
+                      theme='danger'
+                      variant='text'
+                      onClick={() => {
+                        if (userList[record.rowIndex].status === 1) {
+                          handleReportVideo(userList[record.rowIndex].id).then((res) => {
+                            if (res.code === 200) {
+                              MessagePlugin.success('处理成功');
+                              handleFetchData(currentPage, pageSize);
+                            } else {
+                              MessagePlugin.error('处理失败');
+                            }
+                          });
+                        } else {
+                          MessagePlugin.info('已处理');
+                        }
+                      }}
+                      disabled={userList[record.rowIndex].status === 0}
+                    >
+                      忽略
+                    </Button>
+                  )}
                 </>
               );
             },
