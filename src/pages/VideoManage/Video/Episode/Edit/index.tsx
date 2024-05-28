@@ -2,7 +2,17 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { BrowserRouterProps, useParams } from 'react-router-dom';
 
 import { getEpisodeDetail, IEpisodeDetail, modifyEpisode } from 'services/video';
-import { Button, Card, DatePicker, Input, InputAdornment, Loading, MessagePlugin, Table } from 'tdesign-react';
+import {
+  Button,
+  Card,
+  Checkbox,
+  DatePicker,
+  Input,
+  InputAdornment,
+  Loading,
+  MessagePlugin,
+  Table,
+} from 'tdesign-react';
 
 import Style from './index.module.less';
 import VideoUpload from '../component/VideoUpload';
@@ -22,6 +32,7 @@ const Edit: React.FC<BrowserRouterProps> = () => {
       size?: number;
     }[]
   >();
+  const [isBilibili, setIsBilibili] = useState<boolean>(false);
 
   const handleFetchData = () => {
     if (!id) return;
@@ -136,17 +147,37 @@ const Edit: React.FC<BrowserRouterProps> = () => {
             ]}
           />
 
-          <p
-            style={{
-              margin: 0,
-              color: '#333',
-              padding: 0,
-              fontSize: '16px',
-            }}
-          >
-            更换视频源
-          </p>
-          <VideoUpload setLink={setLink} />
+          <InputAdornment prepend='添加B站视频'>
+            <Checkbox
+              style={{
+                marginLeft: '10px',
+              }}
+              checked={isBilibili}
+              onChange={setIsBilibili}
+            />
+          </InputAdornment>
+
+          {isBilibili && (
+            <InputAdornment prepend='B站BV号'>
+              <Input placeholder='请输入BV号' value={link} clearable onChange={setLink} />
+            </InputAdornment>
+          )}
+
+          {!isBilibili && (
+            <>
+              <p
+                style={{
+                  margin: 0,
+                  color: '#333',
+                  padding: 0,
+                  fontSize: '16px',
+                }}
+              >
+                更换视频源
+              </p>
+              <VideoUpload setLink={setLink} />
+            </>
+          )}
 
           <div style={{ display: 'flex', gap: '1rem' }}>
             <Button

@@ -2,7 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouterProps, useParams } from 'react-router-dom';
 
 import { addEpisode } from 'services/video';
-import { Button, Card, Input, InputAdornment, InputNumber, MessagePlugin, TagInput, Textarea } from 'tdesign-react';
+import {
+  Button,
+  Card,
+  Checkbox,
+  Input,
+  InputAdornment,
+  InputNumber,
+  MessagePlugin,
+  TagInput,
+  Textarea,
+} from 'tdesign-react';
 
 import Style from './index.module.less';
 import VideoUpload from '../component/VideoUpload';
@@ -13,6 +23,7 @@ const Add: React.FC<BrowserRouterProps> = () => {
   const [description, setDescription] = useState<string>('Null');
   const [link, setLink] = useState<string | undefined>(undefined);
   const [index, setIndex] = useState<number | undefined>(undefined);
+  const [isBilibili, setIsBilibili] = useState<boolean>(false);
 
   useEffect(() => {
     document.title = '添加视频';
@@ -46,18 +57,36 @@ const Add: React.FC<BrowserRouterProps> = () => {
           />
         </InputAdornment>
 
-        <div>
-          <p
+        <InputAdornment prepend='添加B站视频'>
+          <Checkbox
             style={{
-              fontSize: '16px',
-              color: '#333',
-              margin: '5px 0',
+              marginLeft: '10px',
             }}
-          >
-            添加视频
-          </p>
-          <VideoUpload setLink={setLink} />
-        </div>
+            checked={isBilibili}
+            onChange={setIsBilibili}
+          />
+        </InputAdornment>
+
+        {isBilibili && (
+          <InputAdornment prepend='B站BV号'>
+            <Input placeholder='请输入BV号' value={link} clearable onChange={setLink} />
+          </InputAdornment>
+        )}
+
+        {!isBilibili && (
+          <div>
+            <p
+              style={{
+                fontSize: '16px',
+                color: '#333',
+                margin: '5px 0',
+              }}
+            >
+              添加视频
+            </p>
+            <VideoUpload setLink={setLink} />
+          </div>
+        )}
 
         <Button
           theme='primary'

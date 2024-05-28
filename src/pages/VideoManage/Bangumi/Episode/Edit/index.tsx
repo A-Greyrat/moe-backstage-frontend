@@ -28,6 +28,7 @@ const Edit: React.FC<BrowserRouterProps> = () => {
   const [link, setLink] = useState<string | undefined>(undefined);
   const [isBangumiPrePublish, setIsBangumiPrePublish] = useState<boolean>(false);
   const [bangumiPrePublishTime, setBangumiPrePublishTime] = useState<string | null>(null);
+  const [isBilibili, setIsBilibili] = useState<boolean>(false);
   const [src, setSrc] = useState<
     {
       srcName: string;
@@ -177,18 +178,37 @@ const Edit: React.FC<BrowserRouterProps> = () => {
             ]}
           />
 
-          <p
-            style={{
-              margin: 0,
-              color: '#333',
-              padding: 0,
-              fontSize: '16px',
-            }}
-          >
-            更换视频源
-          </p>
-          <VideoUpload setLink={setLink} />
+          <InputAdornment prepend='添加B站视频'>
+            <Checkbox
+              style={{
+                marginLeft: '10px',
+              }}
+              checked={isBilibili}
+              onChange={setIsBilibili}
+            />
+          </InputAdornment>
 
+          {isBilibili && (
+            <InputAdornment prepend='B站BV号'>
+              <Input placeholder='请输入BV号' value={link} clearable onChange={setLink} />
+            </InputAdornment>
+          )}
+
+          {!isBilibili && (
+            <>
+              <p
+                style={{
+                  margin: 0,
+                  color: '#333',
+                  padding: 0,
+                  fontSize: '16px',
+                }}
+              >
+                更换视频源
+              </p>
+              <VideoUpload setLink={setLink} />
+            </>
+          )}
           <div style={{ display: 'flex', gap: '1rem' }}>
             <Button
               theme='primary'

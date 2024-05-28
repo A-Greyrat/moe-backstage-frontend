@@ -15,6 +15,7 @@ const Add: React.FC<BrowserRouterProps> = () => {
   const [index, setIndex] = useState<number | undefined>(undefined);
   const [isBangumiPrePublish, setIsBangumiPrePublish] = useState<boolean>(false);
   const [bangumiPrePublishTime, setBangumiPrePublishTime] = useState<string>();
+  const [isBilibili, setIsBilibili] = useState<boolean>(false);
 
   useEffect(() => {
     document.title = '添加视频';
@@ -68,18 +69,36 @@ const Add: React.FC<BrowserRouterProps> = () => {
           </InputAdornment>
         )}
 
-        <div>
-          <p
+        <InputAdornment prepend='添加B站视频'>
+          <Checkbox
             style={{
-              fontSize: '16px',
-              color: '#333',
-              margin: '5px 0',
+              marginLeft: '10px',
             }}
-          >
-            添加视频
-          </p>
-          <VideoUpload setLink={setLink} />
-        </div>
+            checked={isBilibili}
+            onChange={setIsBilibili}
+          />
+        </InputAdornment>
+
+        {isBilibili && (
+          <InputAdornment prepend='B站BV号'>
+            <Input placeholder='请输入BV号' value={link} clearable onChange={setLink} />
+          </InputAdornment>
+        )}
+
+        {!isBilibili && (
+          <div>
+            <p
+              style={{
+                fontSize: '16px',
+                color: '#333',
+                margin: '5px 0',
+              }}
+            >
+              添加视频
+            </p>
+            <VideoUpload setLink={setLink} />
+          </div>
+        )}
 
         <Button
           theme='primary'
