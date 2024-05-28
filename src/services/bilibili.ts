@@ -129,7 +129,12 @@ export const addVideo = async (bv: string, SESSDATA?: string) => {
             }));
 
             return httpPost('/backstage/dangerous/danmaku/import', danmaku);
-          }),
+          })
+          .catch((e) => ({
+            code: 500,
+            msg: '弹幕获取失败',
+            data: e,
+          })),
       );
     }
     promises.push(
@@ -295,7 +300,12 @@ export const addBangumi = async (ssid: string, SESSDATA?: string) => {
             }));
 
             return httpPost('/backstage/dangerous/danmaku/import', danmaku);
-          }),
+          })
+          .catch((e) => ({
+            code: 500,
+            msg: '弹幕获取失败',
+            data: e,
+          })),
       );
     }
 

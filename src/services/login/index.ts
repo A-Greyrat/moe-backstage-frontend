@@ -92,7 +92,6 @@ export const getUserInfo = async () => {
   const { id } = payload.claims;
   return httpGet<typeof userInfo>(`/plain-user?uid=${id}`).then((res) => {
     if (res.code === 200) {
-      console.log(res);
       userInfo = res.data;
     }
     return userInfo;

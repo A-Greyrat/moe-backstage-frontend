@@ -156,7 +156,6 @@ const Video: React.FC<BrowserRouterProps> = () => {
                     theme='primary'
                     variant='text'
                     onClick={() => {
-                      console.log(videoList[record.rowIndex]);
                       if (videoList[record.rowIndex].status === 1) {
                         lockVideoGroup(videoList[record.rowIndex].id).then((res) => {
                           if (res.code === 200) {

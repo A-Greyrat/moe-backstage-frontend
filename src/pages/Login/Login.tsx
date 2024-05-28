@@ -130,7 +130,6 @@ export const Captcha = () => {
     getCaptcha()
       .then((res) => {
         if (res.code === 200) {
-          console.log(res.data);
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           setCaptcha(res.data);
@@ -191,7 +190,6 @@ export const SubmitButton = () => {
     getCaptcha()
       .then((res) => {
         if (res.code === 200) {
-          console.log(res.data);
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           setCaptcha(res.data);
