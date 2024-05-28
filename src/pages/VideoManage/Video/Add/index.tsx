@@ -2,15 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouterProps } from 'react-router-dom';
 
 import { addVideoGroup } from '../../../../services/video';
-import {
-  Button,
-  Card,
-  Input,
-  InputAdornment,
-  MessagePlugin,
-  TagInput,
-  Textarea,
-} from 'tdesign-react';
+import { Button, Card, Input, InputAdornment, MessagePlugin, TagInput, Textarea } from 'tdesign-react';
 
 import Style from './index.module.less';
 import ImageUpload from '../../component/ImageUpload';

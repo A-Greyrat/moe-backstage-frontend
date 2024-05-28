@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { BrowserRouterProps } from 'react-router-dom';
 import { Button, MessagePlugin, Row, Table, Tag } from 'tdesign-react';
 import SearchForm from './components/SearchForm';
-import { getFeedbackList, handleFeedback } from 'services/feedback';
+import { deleteFeedback, getFeedbackList, handleFeedback } from 'services/feedback';
 
 const Feedback: React.FC<BrowserRouterProps> = () => {
   document.title = '反馈管理';
@@ -113,6 +113,22 @@ const Feedback: React.FC<BrowserRouterProps> = () => {
                     disabled={userList[record.rowIndex].status === 0}
                   >
                     {userList[record.rowIndex].status === 1 ? '处理' : '已处理'}
+                  </Button>
+                  <Button
+                    theme='danger'
+                    variant='text'
+                    onClick={() => {
+                      deleteFeedback(userList[record.rowIndex].id).then((res) => {
+                        if (res.code === 200) {
+                          MessagePlugin.success('删除成功');
+                          handleFetchData(currentPage, pageSize);
+                        } else {
+                          MessagePlugin.error('删除失败');
+                        }
+                      });
+                    }}
+                  >
+                    删除
                   </Button>
                 </>
               );

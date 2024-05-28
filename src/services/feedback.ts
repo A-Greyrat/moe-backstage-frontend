@@ -39,3 +39,5 @@ export const getFeedbackList = async (params: IFeedbackParams) =>
   });
 
 export const handleFeedback = async (id: number) => httpPost(`/backstage/feedback/handle`, { id });
+
+export const deleteFeedback = async (id: number) => httpPost(`/backstage/feedback/delete`, { ids: [id] });
