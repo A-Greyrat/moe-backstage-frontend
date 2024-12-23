@@ -3,7 +3,7 @@ import { httpPost } from './axios';
 import { getUserInfo } from './login';
 
 const proxyUrl = 'https://b.erisu.moe/api/proxy?x-referer=https://www.bilibili.com&url=';
-const proxyImgUrl = 'https://fast.abdecd.xyz/proxy?pReferer=https://www.bilibili.com&pUrl=';
+const proxyImgUrl = 'https://abdecd.xyz/proxy?pReferer=https://www.bilibili.com&pUrl=';
 
 const proxy = async (url: string, config?: RequestInit) => {
   const response = await fetch(proxyUrl + url, config);
