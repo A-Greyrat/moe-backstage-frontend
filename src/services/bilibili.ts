@@ -245,7 +245,7 @@ export const addBangumi = async (ssid: string, SESSDATA?: string) => {
 
     for (let j = 1; j <= duration; j += 1) {
       promises.push(
-        fetch(`https://dm.abdecd.xyz/test-bilibili/dm?type=1&bvid=${bv}&segment_index=${j}`, {
+        fetch(`https://abdecd.xyz/test-bilibili/dm?type=1&bvid=${bv}&segment_index=${j}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
