@@ -74,7 +74,7 @@ export const addVideo = async (bv: string, SESSDATA?: string) => {
     const duration = Math.ceil(pages[i - 1].duration / 6 / 60);
     for (let j = 1; j <= duration; j += 1) {
       promises.push(
-        fetch(`https://dm.abdecd.xyz/test-bilibili/dm?type=1&bvid=${bv}&p=${i}&segment_index=${j}`, {
+        fetch(`https://abdecd.xyz/test-bilibili/dm?type=1&bvid=${bv}&p=${i}&segment_index=${j}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
